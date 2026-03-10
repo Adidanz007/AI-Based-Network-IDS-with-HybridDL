@@ -1,23 +1,30 @@
-﻿![Python](https://img.shields.io/badge/Python-3.9+-yellow.svg)
+﻿# 🛡️ AI-Based Network Intrusion Detection Dashboard
+
+![Python](https://img.shields.io/badge/Python-3.9+-yellow.svg)
 ![Framework](https://img.shields.io/badge/Framework-TensorFlow%20%7C%20Keras%20%7C%20Scikit--Learn-orange.svg)
 ![Dataset](https://img.shields.io/badge/Dataset-NSL--KDD-green.svg)
+![Dashboard](https://img.shields.io/badge/Dashboard-Streamlit-red.svg)
 ![Status](https://img.shields.io/badge/Status-Complete-success.svg)
 
-# AI-Based Intrusion Detection Using Hybrid Deep Learning Models
+A comprehensive cybersecurity dashboard for monitoring Machine Learning and Deep Learning model performance in network intrusion detection using the NSL-KDD dataset.
 
-A complete implementation of a Network Intrusion Detection System (NIDS) that combines classical Machine Learning baselines with individual Deep Learning models and a Hybrid CNN-LSTM architecture, evaluated on the NSL-KDD benchmark dataset.
+## 🚀 Quick Start
+
+### Install Dependencies
+```bash
+pip install streamlit plotly pandas numpy scikit-learn tensorflow
+```
+
+### Run the Dashboard
+```bash
+streamlit run cyber_dashboard.py
+```
+
+The dashboard automatically opens at `http://localhost:8501`
 
 ---
 
-## Table of Contents
-
-- [Problem Statement](#problem-statement)
-- [Project Structure](#project-structure)
-- [Dataset](#dataset)
-- [Models Implemented](#models-implemented)
-- [Methodology / Pipeline](#methodology--pipeline)
-- [Installation](#installation)
-- [How to Run](#how-to-run)
+## 📊 Project Overview
 - [Expected Output](#expected-output)
 - [Results Summary](#results-summary)
 
