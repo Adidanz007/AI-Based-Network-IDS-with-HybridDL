@@ -33,88 +33,190 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-# Custom CSS for cybersecurity theme
-st.markdown("""
+# Theme-aware UI constants
+THEME_BASE = (st.get_option("theme.base") or "light").lower()
+IS_DARK_THEME = THEME_BASE == "dark"
+
+CHART_TEXT_COLOR = "#e5e7eb" if IS_DARK_THEME else "#111827"
+CHART_GRID_COLOR = "rgba(148, 163, 184, 0.22)" if IS_DARK_THEME else "rgba(148, 163, 184, 0.28)"
+PLOTLY_TEMPLATE = "plotly_dark" if IS_DARK_THEME else "plotly_white"
+
+CHART_CATEGORY_COLORS = {
+    'ML Baseline': '#2563eb',
+    'Deep Learning': '#16a34a',
+    'Hybrid DL ★': '#f59e0b',
+    'Other': '#64748b'
+}
+
+APP_BACKGROUND = (
+    "linear-gradient(180deg, #0b1220 0%, #111827 60%, #0f172a 100%)"
+    if IS_DARK_THEME
+    else "linear-gradient(180deg, #f8fafc 0%, #f1f5f9 60%, #e2e8f0 100%)"
+)
+SIDEBAR_BACKGROUND = (
+    "linear-gradient(180deg, #0f172a 0%, #1e293b 100%)"
+    if IS_DARK_THEME
+    else "linear-gradient(180deg, #ffffff 0%, #f8fafc 100%)"
+)
+CARD_BACKGROUND = (
+    "linear-gradient(180deg, rgba(30, 41, 59, 0.92) 0%, rgba(15, 23, 42, 0.92) 100%)"
+    if IS_DARK_THEME
+    else "linear-gradient(180deg, #ffffff 0%, #f8fafc 100%)"
+)
+CARD_BORDER = "rgba(148, 163, 184, 0.35)" if IS_DARK_THEME else "rgba(148, 163, 184, 0.45)"
+ACCENT_PRIMARY = "#60a5fa" if IS_DARK_THEME else "#1d4ed8"
+HEADER_COLOR = "#e2e8f0" if IS_DARK_THEME else "#0f172a"
+SUBHEADER_COLOR = "#cbd5e1" if IS_DARK_THEME else "#1e293b"
+BUTTON_BACKGROUND = (
+    "linear-gradient(90deg, #2563eb 0%, #1d4ed8 100%)"
+    if IS_DARK_THEME
+    else "linear-gradient(90deg, #1d4ed8 0%, #2563eb 100%)"
+)
+BUTTON_HOVER_BACKGROUND = (
+    "linear-gradient(90deg, #1d4ed8 0%, #1e40af 100%)"
+    if IS_DARK_THEME
+    else "linear-gradient(90deg, #1e40af 0%, #1d4ed8 100%)"
+)
+INPUT_BORDER = "rgba(148, 163, 184, 0.5)" if IS_DARK_THEME else "rgba(100, 116, 139, 0.35)"
+SUCCESS_BACKGROUND = (
+    "linear-gradient(90deg, #14532d 0%, #166534 100%)"
+    if IS_DARK_THEME
+    else "linear-gradient(90deg, #dcfce7 0%, #bbf7d0 100%)"
+)
+SUCCESS_TEXT = "#dcfce7" if IS_DARK_THEME else "#14532d"
+DANGER_BACKGROUND = (
+    "linear-gradient(90deg, #7f1d1d 0%, #991b1b 100%)"
+    if IS_DARK_THEME
+    else "linear-gradient(90deg, #fee2e2 0%, #fecaca 100%)"
+)
+DANGER_TEXT = "#fee2e2" if IS_DARK_THEME else "#7f1d1d"
+FOOTER_COLOR = "#94a3b8" if IS_DARK_THEME else "#334155"
+
+def apply_chart_theme(fig, height=None):
+    """Apply consistent light/dark chart styling for readability."""
+    layout_update = {
+        "template": PLOTLY_TEMPLATE,
+        "plot_bgcolor": "rgba(0,0,0,0)",
+        "paper_bgcolor": "rgba(0,0,0,0)",
+        "font_color": CHART_TEXT_COLOR
+    }
+    if height is not None:
+        layout_update["height"] = height
+    fig.update_layout(**layout_update)
+    fig.update_xaxes(gridcolor=CHART_GRID_COLOR, zerolinecolor=CHART_GRID_COLOR)
+    fig.update_yaxes(gridcolor=CHART_GRID_COLOR, zerolinecolor=CHART_GRID_COLOR)
+
+# Custom CSS for clean, professional UI
+st.markdown(f"""
 <style>
-/* Dark cybersecurity theme */
-.stApp {
-    background: linear-gradient(135deg, #0c0c0c 0%, #1a1a2e 50%, #16213e 100%);
-}
+.stApp {{
+    background: {APP_BACKGROUND};
+    color: var(--text-color);
+    font-family: "Inter", "Segoe UI", sans-serif;
+}}
 
-/* Sidebar styling */
-.css-1d391kg {
-    background: linear-gradient(180deg, #0f3460 0%, #16213e 100%);
-}
+[data-testid="stSidebar"] > div:first-child {{
+    background: {SIDEBAR_BACKGROUND};
+}}
 
-/* Metric cards styling */
-div[data-testid="metric-container"] {
-    background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
-    border: 1px solid #00ff41;
-    border-radius: 10px;
-    padding: 15px;
-    box-shadow: 0 4px 15px rgba(0, 255, 65, 0.2);
-}
+[data-testid="stMainBlockContainer"] {{
+    max-width: 1280px;
+    padding-top: 1.25rem;
+    padding-bottom: 2rem;
+}}
 
-/* Headers */
-.main-header {
-    font-size: 2.5rem;
-    color: #00ff41;
+p, li, label, .stMarkdown {{
+    line-height: 1.55;
+}}
+
+h1, h2, h3, h4 {{
+    letter-spacing: 0.2px;
+}}
+
+div[data-testid="metric-container"] {{
+    background: {CARD_BACKGROUND};
+    border: 1px solid {CARD_BORDER};
+    border-radius: 12px;
+    padding: 14px 16px;
+    box-shadow: 0 4px 14px rgba(15, 23, 42, 0.14);
+}}
+
+.main-header {{
+    font-size: 2.35rem;
+    color: {HEADER_COLOR};
     text-align: center;
-    text-shadow: 0 0 10px #00ff41;
+    font-weight: 700;
+    letter-spacing: 0.35px;
     margin-bottom: 2rem;
-}
+}}
 
-.section-header {
+.section-header {{
     font-size: 1.8rem;
-    color: #00ccff;
-    text-shadow: 0 0 8px #00ccff;
+    color: {SUBHEADER_COLOR};
+    font-weight: 650;
     margin-top: 2rem;
     margin-bottom: 1rem;
-}
+}}
 
-/* Alert boxes */
-.alert-success {
-    background: linear-gradient(90deg, #28a745, #20c997);
-    color: white;
+.alert-success {{
+    background: {SUCCESS_BACKGROUND};
+    color: {SUCCESS_TEXT};
     padding: 15px;
     border-radius: 8px;
     margin: 10px 0;
-    border-left: 5px solid #00ff41;
-}
+    border-left: 4px solid #22c55e;
+}}
 
-.alert-danger {
-    background: linear-gradient(90deg, #dc3545, #fd7e14);
-    color: white;
+.alert-danger {{
+    background: {DANGER_BACKGROUND};
+    color: {DANGER_TEXT};
     padding: 15px;
     border-radius: 8px;
     margin: 10px 0;
-    border-left: 5px solid #ff073a;
-}
+    border-left: 4px solid #ef4444;
+}}
 
-/* Button styling */
-.stButton > button {
-    background: linear-gradient(45deg, #ff073a 30%, #ff6b35 90%);
+.stButton > button {{
+    background: {BUTTON_BACKGROUND};
     color: white;
-    border: none;
+    border: 1px solid rgba(37, 99, 235, 0.35);
     border-radius: 8px;
-    padding: 0.6rem 2rem;
-    font-weight: bold;
-    text-transform: uppercase;
-    letter-spacing: 1px;
+    padding: 0.56rem 1.2rem;
+    font-weight: 600;
+    letter-spacing: 0.2px;
     transition: all 0.3s ease;
-}
+}}
 
-.stButton > button:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 5px 15px rgba(255, 7, 58, 0.4);
-}
+.stButton > button:hover {{
+    background: {BUTTON_HOVER_BACKGROUND};
+    transform: translateY(-1px);
+    box-shadow: 0 5px 14px rgba(37, 99, 235, 0.32);
+}}
 
-/* Selectbox styling */
-.stSelectbox > div > div {
-    background: #16213e;
-    color: #00ff41;
-    border: 1px solid #00ccff;
-}
+div[data-baseweb="select"] > div,
+.stTextInput > div > div > input,
+.stNumberInput > div > div > input {{
+    border: 1px solid {INPUT_BORDER} !important;
+    border-radius: 8px !important;
+}}
+
+[data-testid="stDataFrame"] {{
+    border: 1px solid {CARD_BORDER};
+    border-radius: 10px;
+    overflow: hidden;
+}}
+
+[data-testid="stPlotlyChart"] {{
+    border: 1px solid {CARD_BORDER};
+    border-radius: 12px;
+    padding: 4px;
+    background: rgba(148, 163, 184, 0.06);
+}}
+
+hr {{
+    border: none;
+    border-top: 1px solid {CARD_BORDER};
+}}
 </style>
 """, unsafe_allow_html=True)
 
@@ -141,7 +243,7 @@ def load_results_data():
             st.error(f"Error loading results.csv: {e}")
             return get_demo_data()
     else:
-        st.info("📁 results.csv not found. Displaying demo results. Run the HybridDL.ipynb notebook to generate real data.")
+        st.caption("Using demo results (results.csv not found).")
         return get_demo_data()
 
 def get_demo_data():
@@ -269,16 +371,8 @@ def show_overview_page(df, categories):
     with col1:
         st.markdown("### 📈 Model Accuracy Comparison")
         
-        # Create color mapping
-        color_map = {
-            'ML Baseline': '#3498db',      # Blue
-            'Deep Learning': '#2ecc71',    # Green  
-            'Hybrid DL ★': '#f39c12',      # Orange
-            'Other': '#95a5a6'             # Gray
-        }
-        
         df_sorted = df.sort_values('Accuracy', ascending=True)
-        colors = [color_map.get(categories.get(model, 'Other'), '#95a5a6') for model in df_sorted['Model']]
+        colors = [CHART_CATEGORY_COLORS.get(categories.get(model, 'Other'), CHART_CATEGORY_COLORS['Other']) for model in df_sorted['Model']]
         
         fig = px.bar(
             df_sorted, 
@@ -289,13 +383,8 @@ def show_overview_page(df, categories):
             color_discrete_sequence=colors
         )
         
-        fig.update_layout(
-            plot_bgcolor='rgba(0,0,0,0)',
-            paper_bgcolor='rgba(0,0,0,0)',
-            font_color='white',
-            height=500,
-            showlegend=False
-        )
+        apply_chart_theme(fig, height=500)
+        fig.update_layout(showlegend=False)
         
         fig.update_traces(texttemplate='%{x:.1f}%', textposition='outside')
         st.plotly_chart(fig, use_container_width=True)
@@ -404,13 +493,9 @@ def show_leaderboard_page(df, categories):
             x=sort_metric,
             title=f"{sort_metric} Distribution",
             nbins=10,
-            color_discrete_sequence=['#00ff41']
+            color_discrete_sequence=[ACCENT_PRIMARY]
         )
-        fig.update_layout(
-            plot_bgcolor='rgba(0,0,0,0)',
-            paper_bgcolor='rgba(0,0,0,0)', 
-            font_color='white'
-        )
+        apply_chart_theme(fig)
         st.plotly_chart(fig, use_container_width=True)
     
     with col2:
@@ -422,13 +507,13 @@ def show_leaderboard_page(df, categories):
             values=sort_metric,
             names='Category',
             title=f"Average {sort_metric} by Category",
-            color_discrete_sequence=['#3498db', '#2ecc71', '#f39c12']
+            color_discrete_sequence=[
+                CHART_CATEGORY_COLORS['ML Baseline'],
+                CHART_CATEGORY_COLORS['Deep Learning'],
+                CHART_CATEGORY_COLORS['Hybrid DL ★']
+            ]
         )
-        fig.update_layout(
-            plot_bgcolor='rgba(0,0,0,0)',
-            paper_bgcolor='rgba(0,0,0,0)',
-            font_color='white'
-        )
+        apply_chart_theme(fig)
         st.plotly_chart(fig, use_container_width=True)
 
 # ══════════════════════════════════════════════════════════════════════════════
@@ -479,20 +564,15 @@ def show_bar_chart(df, metric, categories):
         color='Category',
         title=f"Model Performance: {metric}",
         color_discrete_map={
-            'ML Baseline': '#3498db',
-            'Deep Learning': '#2ecc71', 
-            'Hybrid DL ★': '#f39c12',
-            'Other': '#95a5a6'
+            'ML Baseline': CHART_CATEGORY_COLORS['ML Baseline'],
+            'Deep Learning': CHART_CATEGORY_COLORS['Deep Learning'], 
+            'Hybrid DL ★': CHART_CATEGORY_COLORS['Hybrid DL ★'],
+            'Other': CHART_CATEGORY_COLORS['Other']
         }
     )
     
-    fig.update_layout(
-        plot_bgcolor='rgba(0,0,0,0)',
-        paper_bgcolor='rgba(0,0,0,0)',
-        font_color='white',
-        xaxis_tickangle=-45,
-        height=500
-    )
+    apply_chart_theme(fig, height=500)
+    fig.update_layout(xaxis_tickangle=-45)
     
     fig.update_traces(texttemplate='%{y:.1f}%', textposition='outside')
     st.plotly_chart(fig, use_container_width=True)
@@ -508,7 +588,7 @@ def show_radar_chart(df):
     
     fig = go.Figure()
     
-    colors = ['#ff6b35', '#f7931e', '#ffcc02', '#9bc53d', '#5aa3c4']
+    colors = ['#2563eb', '#16a34a', '#f59e0b', '#a855f7', '#0ea5e9']
     
     for i, (_, model) in enumerate(df_top5.iterrows()):
         values = [model[metric] for metric in metrics]
@@ -528,15 +608,17 @@ def show_radar_chart(df):
             radialaxis=dict(
                 visible=True,
                 range=[0, 100],
-                color='white'
+                color=CHART_TEXT_COLOR,
+                gridcolor=CHART_GRID_COLOR
             ),
-            angularaxis=dict(color='white')
+            angularaxis=dict(color=CHART_TEXT_COLOR, gridcolor=CHART_GRID_COLOR)
         ),
         showlegend=True,
         title="Top 5 Models - Multi-Metric Comparison",
+        template=PLOTLY_TEMPLATE,
         plot_bgcolor='rgba(0,0,0,0)',
         paper_bgcolor='rgba(0,0,0,0)',
-        font_color='white',
+        font_color=CHART_TEXT_COLOR,
         height=600
     )
     
@@ -556,11 +638,7 @@ def show_heatmap(df):
         aspect='auto'
     )
     
-    fig.update_layout(
-        plot_bgcolor='rgba(0,0,0,0)',
-        paper_bgcolor='rgba(0,0,0,0)',
-        font_color='white'
-    )
+    apply_chart_theme(fig)
     
     st.plotly_chart(fig, use_container_width=True)
 
@@ -579,7 +657,11 @@ def show_box_plot(df, categories):
         horizontal_spacing=0.05
     )
     
-    colors = ['#3498db', '#2ecc71', '#f39c12']
+    colors = [
+        CHART_CATEGORY_COLORS['ML Baseline'],
+        CHART_CATEGORY_COLORS['Deep Learning'],
+        CHART_CATEGORY_COLORS['Hybrid DL ★']
+    ]
     
     for i, metric in enumerate(metrics):
         for j, category in enumerate(['ML Baseline', 'Deep Learning', 'Hybrid DL ★']):
@@ -596,13 +678,8 @@ def show_box_plot(df, categories):
                     row=1, col=i+1
                 )
     
-    fig.update_layout(
-        height=400,
-        plot_bgcolor='rgba(0,0,0,0)',
-        paper_bgcolor='rgba(0,0,0,0)',
-        font_color='white',
-        title_text="Performance Distribution by Model Category"
-    )
+    apply_chart_theme(fig, height=400)
+    fig.update_layout(title_text="Performance Distribution by Model Category")
     
     st.plotly_chart(fig, use_container_width=True)
 
@@ -830,9 +907,9 @@ if __name__ == "__main__":
     # Footer
     st.markdown("---")
     st.markdown("""
-    <div style="text-align: center; color: #00ccff; margin-top: 2rem;">
+    <div style="text-align: center; color: {}; margin-top: 2rem;">
         <p>🛡️ <strong>AI-Based Network Intrusion Detection System</strong></p>
         <p>Powered by Machine Learning & Deep Learning | NSL-KDD Dataset</p>
         <p>Real-time cybersecurity monitoring and threat detection</p>
     </div>
-    """, unsafe_allow_html=True)
+    """.format(FOOTER_COLOR), unsafe_allow_html=True)
